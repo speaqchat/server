@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int     @id @default(autoincrement())
+  username       String  @unique
+  email          String  @unique
+  password       String
+  profilePicture String?
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  friends              User[]          @relation("friends")
+  friendsRelation      User[]          @relation("friends")
+  friendRequests       FriendRequest[] @relation("userRelation")
+  friendRequestsFriend FriendRequest[] @relation("friendRelation")
+
+  userConversation   Conversation[] @relation(name: "user1")
+  friendConversation Conversation[] @relation(name: "user2")
+}
+
+model FriendRequest {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  friendId  Int
+  // user      User     @relation(name: "users", fields: [userId], references: [id])
+  // friend    User     @relation(name: "friend_users", fields: [friendId], references: [id])
+  status    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(name: "userRelation", fields: [userId], references: [id])
+  friend    User     @relation(name: "friendRelation", fields: [friendId], references: [id])
+
+  @@unique([userId, friendId])
+}
+
+model Conversation {
+  id       Int @id @default(autoincrement())
+  userId   Int
+  friendId Int
+
+  user   User @relation(name: "user1", fields: [userId], references: [id])
+  friend User @relation(name: "user2", fields: [friendId], references: [id])
+
+  messages Message[]
+
+  @@unique([userId, friendId])
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  content        String
+  senderId       Int
+  sender         User         @relation(fields: [senderId], references: [id])
+}

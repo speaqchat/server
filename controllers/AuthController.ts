@@ -37,6 +37,7 @@ export default {
       return res.status(500).json(err);
     }
   },
+  
 
   login: async (req: Request, res: Response) => {
     try {

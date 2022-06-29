@@ -7,9 +7,7 @@ import { port } from "../config";
 import { routes } from "./routes";
 
 const app = express();
-export const prisma = new PrismaClient({
-  rejectOnNotFound: true
-});
+export const prisma = new PrismaClient();
 
 app.use(cors({ origin: "*" }));
 app.use(helmet());

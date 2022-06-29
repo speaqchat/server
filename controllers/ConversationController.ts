@@ -29,6 +29,9 @@ export default {
         },
       });
 
+      if (!conversations)
+        return res.status(404).json({ message: "No conversations found." });
+
       const convs = [
         ...conversations.friendConversation.concat(
           ...conversations.userConversation

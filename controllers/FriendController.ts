@@ -9,7 +9,7 @@ export default {
       if (!userId || typeof userId !== "string")
         return res.status(500).json({ message: "User id not provided." });
 
-      const { friends } = await prisma.user.findFirst({
+      const user = await prisma.user.findFirst({
         where: {
           id: parseInt(userId),
         },
@@ -17,6 +17,10 @@ export default {
           friends: true,
         },
       });
+
+      if (!user) return res.status(404).json({ message: "User not found." });
+
+      const { friends } = user;
 
       if (!friends)
         return res.status(404).json({ message: "Error fetching friends." });

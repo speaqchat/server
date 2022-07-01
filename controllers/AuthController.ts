@@ -7,6 +7,7 @@ import { validPassword } from "../utils/validatePassword";
 
 const jwtSign = (user: User) => {
   const ONE_WEEK = 60 * 60 * 24 * 7;
+
   return sign(user, process.env.SECRET!, {
     expiresIn: ONE_WEEK,
   });

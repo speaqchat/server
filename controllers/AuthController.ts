@@ -2,13 +2,12 @@ import { User } from "@prisma/client";
 import bcrypt, { genSalt } from "bcrypt";
 import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
-import { secret } from "../config/";
 import { prisma } from "../src/app";
 import { validPassword } from "../utils/validatePassword";
 
 const jwtSign = (user: User) => {
   const ONE_WEEK = 60 * 60 * 24 * 7;
-  return sign(user, secret, {
+  return sign(user, process.env.SECRET!, {
     expiresIn: ONE_WEEK,
   });
 };
@@ -37,7 +36,6 @@ export default {
       return res.status(500).json(err);
     }
   },
-  
 
   login: async (req: Request, res: Response) => {
     try {

@@ -3,7 +3,6 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import { port } from "../config";
 import { routes } from "./routes";
 
 const app = express();
@@ -16,6 +15,6 @@ app.use(express.json());
 
 routes(app);
 
-app.listen(port, () => {
-  console.log(`💫 server running on port ${port}`);
+app.listen(process.env.PORT, () => {
+  console.log(`💫 server running on port ${process.env.PORT}`);
 });

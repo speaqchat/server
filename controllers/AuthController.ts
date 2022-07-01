@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import bcrypt, { genSalt } from "bcrypt";
+import * as bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
 import { prisma } from "../src/app";
@@ -24,7 +24,7 @@ export default {
         data: {
           username,
           email,
-          password: await bcrypt.hash(password, await genSalt(7)),
+          password: await bcrypt.hash(password, await bcrypt.genSalt(7)),
         },
       });
 

@@ -4,9 +4,12 @@
   "main": "src/app.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
     "start": "node dist/src/app.js",
-    "dev": "nodemon src/app.ts"
+    "dev": "nodemon src/app.ts",
+    "postinstall": "tsc",
+    "watch-node": "nodemon dist/src/app.js",
+    "watch-ts": "tsc -w",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "dependencies": {
     "@prisma/client": "^4.0.0",

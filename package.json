@@ -9,7 +9,7 @@
     "postinstall": "tsc",
     "watch-node": "nodemon dist/src/app.js",
     "watch-ts": "tsc -w",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master"
+    "deploy": "git add -A && git commit -m \"Heroku\" && git push heroku HEAD:master"
   },
   "dependencies": {
     "@prisma/client": "^4.0.0",

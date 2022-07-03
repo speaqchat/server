@@ -59,6 +59,27 @@ export default {
           .status(500)
           .json({ message: "No user id or friend id provided." });
 
+      // check if conversation already exists
+      const prevConv = await prisma.conversation.findMany({
+        where: {
+          userId: parseInt(userId),
+          friendId: parseInt(friendId),
+        },
+      });
+
+      const prevConv2 = await prisma.conversation.findMany({
+        where: {
+          userId: parseInt(friendId),
+          friendId: parseInt(userId),
+        },
+      });
+
+      if (prevConv.length > 0 || prevConv2.length > 0) {
+        return res.status(400).json({
+          message: "Conversation already exists.",
+        });
+      }
+
       const conversation = await prisma.conversation.create({
         data: {
           userId: userId,

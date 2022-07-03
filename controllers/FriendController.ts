@@ -104,6 +104,32 @@ export default {
         },
       });
 
+      const user1Friends = await prisma.user.findFirst({
+        where: {
+          id: userId,
+        },
+        select: {
+          friends: true,
+        },
+      });
+
+      const user2Friends = await prisma.user.findFirst({
+        where: {
+          id: friend.id,
+        },
+        select: {
+          friends: true,
+        },
+      });
+
+      if (user1Friends?.friends.find((f) => f.id === friend.id)) {
+        return res.status(400).json({ message: "Already friends." });
+      }
+
+      if (user2Friends?.friends.find((f) => f.id === userId)) {
+        return res.status(400).json({ message: "Already friends." });
+      }
+
       if (friendReq.length > 0 || friendReq2.length > 0)
         return res
           .status(400)

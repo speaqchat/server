@@ -89,6 +89,26 @@ export default {
       if (!friend)
         return res.status(404).json({ message: "Friend not found." });
 
+      // check if friend request already exists
+      const friendReq = await prisma.friendRequest.findMany({
+        where: {
+          userId: userId,
+          friendId: friend.id,
+        },
+      });
+
+      const friendReq2 = await prisma.friendRequest.findMany({
+        where: {
+          userId: friend.id,
+          friendId: userId,
+        },
+      });
+
+      if (friendReq.length > 0 || friendReq2.length > 0)
+        return res
+          .status(400)
+          .json({ message: "Friend request already exists." });
+
       const friendship = await prisma.friendRequest.create({
         data: {
           userId: userId,

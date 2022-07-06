@@ -7,8 +7,7 @@ export default {
   picture: async (req: Request, res: Response) => {
     try {
       const file = req.file;
-
-      if (!file) return;
+      if (!file) return res.status(400).json({ message: "No file provided" });
 
       const croppedFile = await sharp(file.buffer).resize(200).toBuffer();
 

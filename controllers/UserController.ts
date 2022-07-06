@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
 import { prisma } from "../src/app";
 import { upload, getFileStream } from "../utils/s3";
+import sharp from "sharp";
 
 export default {
   picture: async (req: Request, res: Response) => {
     try {
       const file = req.file;
-      const result = await upload(file);
+
+      if (!file) return;
+
+      const croppedFile = await sharp(file.buffer).resize(200).toBuffer();
+
+      const result = await upload(croppedFile);
 
       const { id } = req.params;
       const parsedId = parseInt(id, 10);

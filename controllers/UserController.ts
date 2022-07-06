@@ -9,17 +9,10 @@ export default {
       const file = req.file;
       if (!file) return res.status(400).json({ message: "No file provided" });
 
-      // const result = await upload(file);
+      // crop image with sharp and make it into multer file type
+      await sharp(file.path).resize(500, 500).toFile(file.path);
 
-      //crop image to square with sharp
-      const image = await sharp(file.path).resize(256, 256).toBuffer();
-
-      //upload cropped image to s3
-      const croppedResult = await upload({
-        filename: file.filename,
-        mimetype: file.mimetype,
-        data: image,
-      });
+      const result = await upload(file);
 
       const { id } = req.params;
       const parsedId = parseInt(id, 10);
@@ -31,14 +24,14 @@ export default {
           id: parsedId,
         },
         data: {
-          profilePicture: croppedResult.Key,
+          profilePicture: result.Key,
         },
       });
 
       if (!user)
         return res.status(500).json({ message: "Error finding user." });
 
-      const fileStream = getFileStream(croppedResult.Key);
+      const fileStream = getFileStream(result.Key);
 
       return fileStream.pipe(res);
     } catch (err) {

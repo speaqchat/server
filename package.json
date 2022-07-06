@@ -37,6 +37,7 @@
   "devDependencies": {
     "@types/multer": "^1.4.7",
     "@types/node": "^18.0.0",
+    "@types/sharp": "^0.30.4",
     "nodemon": "^2.0.18"
   }
 }

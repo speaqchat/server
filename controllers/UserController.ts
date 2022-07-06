@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import sharp from "sharp";
 import { prisma } from "../src/app";
 import { upload, getFileStream } from "../utils/s3";
-import sharp from "sharp";
 
 export default {
   picture: async (req: Request, res: Response) => {
@@ -9,9 +9,17 @@ export default {
       const file = req.file;
       if (!file) return res.status(400).json({ message: "No file provided" });
 
-      const croppedFile = await sharp(file.buffer).resize(200).toBuffer();
+      // const result = await upload(file);
 
-      const result = await upload(croppedFile);
+      //crop image to square with sharp
+      const image = await sharp(file.path).resize(256, 256).toBuffer();
+
+      //upload cropped image to s3
+      const croppedResult = await upload({
+        filename: file.filename,
+        mimetype: file.mimetype,
+        data: image,
+      });
 
       const { id } = req.params;
       const parsedId = parseInt(id, 10);
@@ -23,14 +31,14 @@ export default {
           id: parsedId,
         },
         data: {
-          profilePicture: result.Key,
+          profilePicture: croppedResult.Key,
         },
       });
 
       if (!user)
         return res.status(500).json({ message: "Error finding user." });
 
-      const fileStream = getFileStream(result.Key);
+      const fileStream = getFileStream(croppedResult.Key);
 
       return fileStream.pipe(res);
     } catch (err) {

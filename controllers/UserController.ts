@@ -1,16 +1,13 @@
 import { Request, Response } from "express";
-import sharp from "sharp";
 import { prisma } from "../src/app";
 import { upload, getFileStream } from "../utils/s3";
+import { resize } from "../utils/resize";
 
 export default {
   picture: async (req: Request, res: Response) => {
     try {
       const file = req.file;
       if (!file) return res.status(400).json({ message: "No file provided" });
-
-      // crop image with sharp and make it into multer file type
-      await sharp(file.path).resize(500, 500).toFile(file.path);
 
       const result = await upload(file);
 
@@ -33,7 +30,10 @@ export default {
 
       const fileStream = getFileStream(result.Key);
 
-      return fileStream.pipe(res);
+      // resize the image to 200 x 200 and pipe it to the response
+      return fileStream.pipe(resize(file.path, "png", 500, 500)).pipe(res);
+
+      // return fileStream.pipe(resize(file.path, "png", 500, 500)).pipe(res);
     } catch (err) {
       return res.status(500).json(err);
     }

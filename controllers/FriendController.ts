@@ -89,6 +89,9 @@ export default {
       if (!friend)
         return res.status(404).json({ message: "Friend not found." });
 
+      if (friend.id === parseInt(userId))
+        return res.status(400).json({ message: "You can't add yourself." });
+
       // check if friend request already exists
       const friendReq = await prisma.friendRequest.findMany({
         where: {
